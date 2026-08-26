@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherGPT-AI assistant</title>
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+</head>
+
+<body>
+    <div>
+        <h1>WeatherGPT- Talk To The Sky</h1>
+        <h3>Talk, Understand, Prepare</h3>
+    </div>
+    <hr>
+    <hr>
+    <button class="hamburger-menu" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="side-menu" id="sideMenu">
+        <a href="#">Change Theme</a>
+
+        <button id="themeToggle" type="button">
+            <span class="material-symbols-outlined">dark_mode</span>
+        </button>
+        </button>
+        </button>
+        <a href="#">Weather</a>
+        <a href="#">Map</a>
+        <a href="#">Recommendations for Farmers</a>
+        <a href="#">Recommendations for Fishermen</a>
+        <a href="#">Settings</a>
+    </div>
+    <span class="material-symbols-outlined">account_circle</span>
+    <div class="chat-container">
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai-message">
+                Hello! I'm WeatherGPT. Ask me anything about the weather.
+            </div>
+        </div>
+        <div class="weather-cards">
+
+            <div class="container" id="Rain Forecast">
+                <img src="rain_logo.png" width="20">
+                Rain Forecast
+            </div>
+
+            <div class="container" id="AQI">
+                <img src="aqi.png" width="20">
+                AQI
+            </div>
+
+            <div class="container" id="Visibility">
+                <img src="visibility.png" width="20">
+                Visibility
+            </div>
+
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Ask WeatherGPT anything...">
+
+            <button id="sendButton">
+                <span class="material-symbols-outlined">send</span>
+            </button>
+            <button id="micButton" type="button">
+                <span class="material-symbols-outlined">mic</span>
+            </button>
+        </div>
+    </div>
+
+
+    <script src="app.js"></script>
+</body>
+
+</html>
