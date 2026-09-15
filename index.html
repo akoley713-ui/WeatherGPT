@@ -6,75 +6,1078 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherGPT-AI assistant</title>
     <link rel="stylesheet" href="app.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg1: #eef8ff;
+            --bg2: #c9e5fa;
+            --bg3: #8fc5ed;
+            --text: #123b5d;
+            --muted: #5d7890;
+            --glass: rgba(255, 255, 255, .48);
+            --glass-strong: rgba(255, 255, 255, .72);
+            --border: rgba(255, 255, 255, .7);
+            --accent: #1769aa;
+            --shadow: 0 12px 40px rgba(30, 90, 130, .12);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 10%, rgba(255, 255, 255, .9), transparent 28%),
+                radial-gradient(circle at 90% 80%, rgba(60, 160, 230, .25), transparent 32%),
+                linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+            transition: background .4s ease, color .3s ease;
+        }
+
+        header {
+            position: relative;
+        }
+
+        header>div:first-child {
+            text-align: center;
+            padding: 26px 20px 14px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--text);
+        }
+
+        h3 {
+            margin: 6px 0 0;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--muted);
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            margin: 0;
+            background: rgba(30, 80, 110, .12);
+        }
+
+        .hamburger-menu {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: .25s ease;
+            box-shadow: 0 5px 20px rgba(30, 90, 130, .08);
+        }
+
+        .hamburger-menu span {
+            width: 21px;
+            height: 2px;
+            border-radius: 5px;
+            background: var(--text);
+            transition: .25s ease;
+        }
+
+        .hamburger-menu:hover {
+            transform: translateY(-2px);
+            background: var(--glass-strong);
+            box-shadow: 0 8px 25px rgba(30, 90, 130, .16);
+        }
+
+        .material-symbols-outlined {
+            color: var(--text);
+        }
+
+        header>div:first-child>.material-symbols-outlined {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 58px;
+            cursor: pointer;
+            transition: .25s ease;
+        }
+
+        header>div:first-child>.material-symbols-outlined:hover {
+            transform: scale(1.08);
+            color: var(--accent);
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 270px;
+            height: 100vh;
+            padding: 85px 18px 20px;
+            background: rgba(248, 253, 255, .88);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255, 255, 255, .7);
+            box-shadow: 10px 0 35px rgba(20, 70, 100, .16);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: .3s cubic-bezier(.4, 0, .2, 1);
+            z-index: 1000;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .side-menu a {
+            padding: 11px 13px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            transition: .2s ease;
+        }
+
+        .side-menu a:hover {
+            background: rgba(23, 105, 170, .09);
+            transform: translateX(3px);
+        }
+
+        #themeToggle {
+            width: 42px;
+            height: 40px;
+            margin: 2px 0 6px auto;
+            border: 1px solid rgba(23, 105, 170, .12);
+            border-radius: 11px;
+            background: rgba(23, 105, 170, .07);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        #themeToggle:hover {
+            background: rgba(23, 105, 170, .14);
+            transform: scale(1.04);
+        }
+
+        main {
+            padding: 25px 18px 10px;
+        }
+
+        .chat-container {
+            width: min(850px, 88%);
+            height: 500px;
+            margin: auto;
+            background: rgba(255, 255, 255, .32);
+            backdrop-filter: blur(22px);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: .3s ease;
+        }
+
+        .chat-container:hover {
+            box-shadow: 0 18px 55px rgba(30, 90, 130, .17);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(23, 105, 170, .25);
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 68%;
+            padding: 11px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.45;
+            animation: messageIn .25s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: var(--glass-strong);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 15px rgba(30, 90, 130, .05);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--accent);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 5px 15px rgba(23, 105, 170, .2);
+        }
+
+        .weather-cards {
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, .2);
+        }
+
+        .container {
+            flex: 1;
+            min-height: 42px;
+            padding: 7px 10px;
+            border: 1px solid rgba(255, 255, 255, .65);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            transition: .22s ease;
+        }
+
+        .container img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        .container:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, .78);
+            box-shadow: 0 7px 18px rgba(30, 90, 130, .1);
+        }
+
+        .container a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, .38);
+            border-top: 1px solid rgba(255, 255, 255, .6);
+        }
+
+        .chat-input input {
+            flex: 1;
+            height: 44px;
+            padding: 0 15px;
+            border: 1px solid rgba(255, 255, 255, .7);
+            outline: 0;
+            border-radius: 13px;
+            font-size: 14px;
+            color: var(--text);
+            background: rgba(255, 255, 255, .75);
+            transition: .2s ease;
+        }
+
+        .chat-input input:focus {
+            border-color: rgba(23, 105, 170, .3);
+            box-shadow: 0 0 0 3px rgba(23, 105, 170, .07);
+        }
+
+        .chat-input button {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 0;
+            border-radius: 13px;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(23, 105, 170, .25);
+        }
+
+        .chat-input button:active {
+            transform: scale(.95);
+        }
+
+        footer {
+            width: min(850px, 88%);
+            margin: 14px auto 20px;
+        }
+
+        footer ul {
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 9px;
+            list-style: none;
+        }
+
+        footer li {
+            min-height: 58px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, .65);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .38);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: .25s ease;
+        }
+
+        footer li:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, .7);
+            box-shadow: 0 8px 22px rgba(30, 90, 130, .1);
+        }
+
+        footer li a {
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        footer li:first-child {
+            border-bottom: 2px solid #1769aa;
+        }
+
+        footer li:nth-child(2) {
+            border-bottom: 2px solid #4caf50;
+        }
+
+        footer li:nth-child(3) {
+            border-bottom: 2px solid #2196f3;
+        }
+
+        footer li:nth-child(4) {
+            border-bottom: 2px solid #777;
+        }
+
+        #settingsButton {
+            border: 0;
+            background: none;
+            font: inherit;
+            font-weight: 600;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .settings-panel {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 30, 45, .3);
+            backdrop-filter: blur(7px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .settings-panel.show {
+            display: flex;
+        }
+
+        .settings-box {
+            position: relative;
+            width: 380px;
+            max-width: 88%;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, .7);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .86);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 60px rgba(10, 50, 80, .2);
+            animation: settingsIn .25s ease;
+        }
+
+        @keyframes settingsIn {
+            from {
+                opacity: 0;
+                transform: scale(.96) translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .settings-box h2 {
+            margin: 0 0 18px;
+            font-size: 22px;
+            color: var(--text);
+        }
+
+        .close-settings {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            border: 0;
+            background: none;
+            font-size: 27px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .settings-box label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 14px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .settings-box select {
+            padding: 10px;
+            border: 1px solid rgba(23, 105, 170, .12);
+            border-radius: 10px;
+            outline: 0;
+            background: #f2f9fd;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .setting-option {
+            flex-direction: row !important;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        body.dark-mode {
+            --bg1: #07151e;
+            --bg2: #0b2636;
+            --bg3: #123c55;
+            --text: #e4f3fb;
+            --muted: #9db8c8;
+            --glass: rgba(20, 45, 60, .5);
+            --glass-strong: rgba(25, 52, 68, .82);
+            --border: rgba(255, 255, 255, .1);
+            --accent: #4aa3dc;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(40, 100, 140, .2), transparent 28%),
+                radial-gradient(circle at 90% 80%, rgba(20, 80, 120, .25), transparent 32%),
+                linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+        }
+
+        body.dark-mode .chat-container {
+            background: rgba(8, 30, 43, .5);
+        }
+
+        body.dark-mode .weather-cards,
+        body.dark-mode .chat-input {
+            background: rgba(5, 25, 37, .45);
+        }
+
+        body.dark-mode .chat-input input {
+            background: rgba(20, 48, 63, .85);
+            color: #e4f3fb;
+            border-color: rgba(255, 255, 255, .1);
+        }
+
+        body.dark-mode .side-menu {
+            background: rgba(7, 25, 36, .94);
+            border-color: rgba(255, 255, 255, .08);
+        }
+
+        body.dark-mode .container,
+        body.dark-mode footer li {
+            background: rgba(20, 48, 63, .55);
+            border-color: rgba(255, 255, 255, .08);
+        }
+
+        body.dark-mode .container:hover,
+        body.dark-mode footer li:hover {
+            background: rgba(30, 65, 82, .8);
+        }
+
+        body.dark-mode .settings-box {
+            background: rgba(12, 35, 48, .94);
+        }
+
+        body.dark-mode .settings-box h2,
+        body.dark-mode .settings-box label {
+            color: #e4f3fb;
+        }
+
+        body.dark-mode .settings-box select {
+            background: #193545;
+            color: #e4f3fb;
+        }
+
+        @media(max-width:800px) {
+
+            .chat-container,
+            footer {
+                width: 92%;
+            }
+
+            .weather-cards {
+                flex-wrap: wrap;
+            }
+
+            .container {
+                min-width: 30%;
+            }
+
+            footer ul {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:600px) {
+            header>div:first-child {
+                padding: 22px 55px 12px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            h3 {
+                font-size: 14px;
+            }
+
+            .hamburger-menu {
+                top: 18px;
+                left: 15px;
+                width: 40px;
+                height: 40px;
+            }
+
+            header>div:first-child>.material-symbols-outlined {
+                top: 17px;
+                right: 15px;
+                font-size: 48px;
+            }
+
+            main {
+                padding: 18px 8px 5px;
+            }
+
+            .chat-container {
+                width: 96%;
+                height: 500px;
+                border-radius: 18px;
+
+                .chat-messages {
+                    padding: 13px;
+                }
+
+                .message {
+                    max-width: 85%;
+                    font-size: 13px;
+                }
+
+                .weather-cards {
+                    gap: 6px;
+                    padding: 7px;
+                }
+
+                .container {
+                    min-height: 38px;
+                    padding: 5px;
+                    font-size: 11px;
+                }
+
+                .container img {
+                    width: 15px;
+                    height: 15px;
+                }
+
+                .chat-input {
+                    padding: 8px;
+                }
+
+                .chat-input input {
+                    height: 42px;
+                    font-size: 13px;
+                }
+
+                .chat-input button {
+                    width: 42px;
+                    height: 42px;
+                }
+
+                footer {
+                    width: 96%;
+                    margin-top: 10px;
+                }
+
+                footer ul {
+                    gap: 7px;
+                }
+
+                footer li {
+                    min-height: 52px;
+                    font-size: 11px;
+                    padding: 6px;
+                }
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div>
-        <h1>WeatherGPT- Talk To The Sky</h1>
-        <h3>Talk, Understand, Prepare</h3>
-    </div>
-    <hr>
-    <hr>
-    <button class="hamburger-menu" aria-label="Open menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-    <div class="side-menu" id="sideMenu">
-        <a href="#">Change Theme</a>
-
-        <button id="themeToggle" type="button">
-            <span class="material-symbols-outlined">dark_mode</span>
-        </button>
-        </button>
-        </button>
-        <a href="#">Weather</a>
-        <a href="#">Map</a>
-        <a href="#">Recommendations for Farmers</a>
-        <a href="#">Recommendations for Fishermen</a>
-        <a href="#">Settings</a>
-    </div>
-    <span class="material-symbols-outlined">account_circle</span>
-    <div class="chat-container">
-
-        <div class="chat-messages" id="chatMessages">
-            <div class="message ai-message">
-                Hello! I'm WeatherGPT. Ask me anything about the weather.
-            </div>
+    <header>
+        <div>
+            <h1>WeatherGPT- Talk To The Sky</h1>
+            <h3>Talk, Understand, Prepare</h3>
+            <span class="material-symbols-outlined">account_circle</span>
         </div>
-        <div class="weather-cards">
+        <button class="hamburger-menu" aria-label="Open menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <hr>
+        <hr>
+        <div class="side-menu" id="sideMenu">
+            <a href="#">Change Theme</a>
 
-            <div class="container" id="Rain Forecast">
-                <img src="rain_logo.png" width="20">
-                Rain Forecast
-            </div>
-
-            <div class="container" id="AQI">
-                <img src="aqi.png" width="20">
-                AQI
-            </div>
-
-            <div class="container" id="Visibility">
-                <img src="visibility.png" width="20">
-                Visibility
-            </div>
-
-        </div>
-        <div class="chat-input">
-            <input type="text" id="userInput" placeholder="Ask WeatherGPT anything...">
-
-            <button id="sendButton">
-                <span class="material-symbols-outlined">send</span>
+            <button id="themeToggle" type="button">
+                <span class="material-symbols-outlined">dark_mode</span>
             </button>
-            <button id="micButton" type="button">
-                <span class="material-symbols-outlined">mic</span>
-            </button>
+            <a href="weather.html">Weather</a>
+            <a href="map.html">Area Map</a>
+            <a href="https://sachet.ndma.gov.in">SACHET-National Disaster Alert Portal</a>
+            <a href="https://mausam.imd.gov.in">IMD-Indian Meterological Department</a>
+            <a href="help.html">Help</a>
+
+        </div>
+    </header>
+    <main>
+        <div class="chat-container">
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    Hello! I'm WeatherGPT. Ask me anything about the weather.
+                </div>
+            </div>
+            <div class="weather-cards">
+
+                <div class="container" id="Rain Forecast">
+                    <img src="rain_logo.png" width="20">
+                    <a href="Rain_Forecast.html" target="_blank">Rain Forecast</a>
+
+                </div>
+
+                <div class="container" id="AQI">
+                    <img src="aqi.png" width="20">
+                    <a href="AQI.html" target="_blank"> AQI</a>
+                </div>
+                <div class="container" id="Temperature">
+                    <img src="temp.png" width="20">
+                    <a href="temp.html" target="_blank"> Temperature</a>
+                </div>
+
+                <div class="container" id="Visibility">
+                    <img src="visibility.png" width="20">
+                    <a href="visibility.html" target="_blank">Visibility</a>
+                </div>
+                <div class="container" id="evacution">
+                    <img src="evacution.png" width="20">
+                    <a href="evacution.html" target="_blank">Evacuation Route</a>
+                </div>
+                <div class="container" id="weather_map">
+                    <img src="weather_map.png" width="20">
+                    <a href="weather_map.html" target="_blank">Weather Map</a>
+                </div>
+
+            </div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Ask WeatherGPT anything...">
+
+                <button id="sendButton">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+                <button id="micButton" type="button">
+                    <span class="material-symbols-outlined">mic</span>
+                </button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <ul>
+            <li><a href="farmers.html">Use current location</a></li>
+            <li><a href="farmers.html">Farmers Mode</a></li>
+            <li><a href="farmers.html">Fisherman Mode</a></li>
+            <li><button id="settingsButton">Settings</button></li>
+        </ul>
+    </footer>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-box">
+            <button class="close-settings" id="closeSettings">×</button>
+
+            <h2>Settings</h2>
+
+            <label>
+                Temperature Unit
+                <select id="temperatureUnit">
+                    <option value="celsius">Celsius °C</option>
+                    <option value="fahrenheit">Fahrenheit °F</option>
+                </select>
+            </label>
+
+            <label>
+                Language
+                <select>
+                    <option>English</option>
+                    <option>Hindi</option>
+                    <option>Bengali</option>
+                </select>
+            </label>
+
+            <label class="setting-option">
+                <span>Send Weather Notifications</span>
+                <input type="checkbox">
+            </label>
         </div>
     </div>
+    <script>const input = document.getElementById("userInput");
+        const button = document.getElementById("sendButton");
+        const messages = document.getElementById("chatMessages");
+
+        function getAIResponse(text) {
+            text = text.toLowerCase();
+
+            // Rain
+            if (text.includes("rain") || text.includes("barish")) {
+                return "Rain is possible depending on your location. Please check the Rain Forecast section for detailed information.";
+            }
+
+            // Temperature
+            if (
+                text.includes("temperature") ||
+                text.includes("temp") ||
+                text.includes("garmi") ||
+                text.includes("thand")
+            ) {
+                return "Temperature information can be checked from the Temperature section. I can also explain what the temperature means for your daily activities.";
+            }
+
+            // AQI
+            if (
+                text.includes("aqi") ||
+                text.includes("air quality") ||
+                text.includes("pollution")
+            ) {
+                return "AQI tells you how clean or polluted the air is. A lower AQI generally means better air quality.";
+            }
+
+            // Visibility
+            if (
+                text.includes("visibility") ||
+                text.includes("fog") ||
+                text.includes("kohra")
+            ) {
+                return "Low visibility can occur because of fog, rain, dust or pollution. Drive carefully when visibility is poor.";
+            }
+
+            // Weather
+            if (
+                text.includes("weather") ||
+                text.includes("mausam")
+            ) {
+                return "I can help you understand weather conditions, rain, temperature, AQI, visibility and weather safety.";
+            }
+
+            // Storm
+            if (
+                text.includes("storm") ||
+                text.includes("thunder") ||
+                text.includes("toofan") ||
+                text.includes("aandhi")
+            ) {
+                return "During a storm, stay indoors, avoid trees and open areas, and follow official weather and disaster alerts.";
+            }
+
+            // Flood
+            if (
+                text.includes("flood") ||
+                text.includes("baadh")
+            ) {
+                return "During flooding, avoid walking or driving through moving water. Move to a safer elevated area and follow official evacuation instructions.";
+            }
+
+            // Farmer
+            if (
+                text.includes("farmer") ||
+                text.includes("crop") ||
+                text.includes("fasal") ||
+                text.includes("kisan")
+            ) {
+                return "Weather can affect irrigation, crop growth and harvesting. Farmers should check rainfall, temperature and severe-weather alerts before field activities.";
+            }
+
+            // Fisherman
+            if (
+                text.includes("fisherman") ||
+                text.includes("fishing") ||
+                text.includes("machhli")
+            ) {
+                return "Fishermen should check wind speed, rainfall, wave conditions and official marine warnings before going to sea.";
+            }
+
+            // Safety
+            if (
+                text.includes("safe") ||
+                text.includes("safety") ||
+                text.includes("danger") ||
+                text.includes("alert")
+            ) {
+                return "For severe weather, stay informed through official alerts such as IMD and SACHET. Follow evacuation instructions when issued.";
+            }
+
+            // Greeting
+            if (
+                text.includes("hello") ||
+                text.includes("hi") ||
+                text.includes("hey") ||
+                text.includes("namaste")
+            ) {
+                return "Hello! I'm WeatherGPT. Ask me about rain, temperature, AQI, visibility, storms or weather safety.";
+            }
+
+            // Default response
+            return "I'm still learning. Try asking me about rain, temperature, AQI, visibility, storms, floods, farmers or weather safety.";
+        }
 
 
-    <script src="app.js"></script>
+        function sendMessage() {
+
+            let text = input.value.trim();
+
+            if (text === "") return;
+
+            // User message
+            let user = document.createElement("div");
+            user.className = "message user-message";
+            user.innerText = text;
+
+            messages.appendChild(user);
+
+            input.value = "";
+
+            messages.scrollTop = messages.scrollHeight;
+
+
+            // AI response
+            setTimeout(function () {
+
+                let ai = document.createElement("div");
+                ai.className = "message ai-message";
+
+                ai.innerText = getAIResponse(text);
+
+                messages.appendChild(ai);
+
+                messages.scrollTop = messages.scrollHeight;
+
+            }, 500);
+        }
+
+
+        // Send button
+        button.addEventListener("click", sendMessage);
+
+
+        // Enter key
+        input.addEventListener("keydown", function (e) {
+
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+
+        });
+
+
+        // Voice recognition
+        const micButton = document.getElementById("micButton");
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = "en-IN";
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            micButton.addEventListener("click", function () {
+
+                recognition.start();
+                micButton.classList.add("listening");
+
+            });
+
+            recognition.onresult = function (event) {
+
+                const voiceText =
+                    event.results[0][0].transcript;
+
+                input.value = voiceText;
+
+                micButton.classList.remove("listening");
+
+                // Automatically send voice question
+                sendMessage();
+
+            };
+
+            recognition.onerror = function () {
+
+                micButton.classList.remove("listening");
+
+            };
+
+            recognition.onend = function () {
+
+                micButton.classList.remove("listening");
+
+            };
+
+        } else {
+
+            micButton.addEventListener("click", function () {
+
+                alert("Voice recognition is not supported in this browser.");
+
+            });
+
+        }
+
+
+        // Hamburger menu
+        const hamburger =
+            document.querySelector(".hamburger-menu");
+
+        const sideMenu =
+            document.getElementById("sideMenu");
+
+        hamburger.addEventListener("click", function () {
+
+            sideMenu.classList.toggle("open");
+
+        });
+
+
+        // Dark mode
+        const themeToggle =
+            document.getElementById("themeToggle");
+
+        themeToggle.addEventListener("click", function () {
+
+            document.body.classList.toggle("dark-mode");
+
+            const icon =
+                themeToggle.querySelector(".material-symbols-outlined");
+
+            if (document.body.classList.contains("dark-mode")) {
+
+                icon.textContent = "light_mode";
+
+            } else {
+
+                icon.textContent = "dark_mode";
+
+            }
+
+        });
+
+
+        // Settings
+        const settingsButton =
+            document.getElementById("settingsButton");
+
+        const settingsPanel =
+            document.getElementById("settingsPanel");
+
+        const closeSettings =
+            document.getElementById("closeSettings");
+
+        settingsButton.addEventListener("click", function () {
+
+            settingsPanel.classList.add("show");
+
+        });
+
+        closeSettings.addEventListener("click", function () {
+
+            settingsPanel.classList.remove("show");
+
+        });
+
+        settingsPanel.addEventListener("click", function (e) {
+
+            if (e.target === settingsPanel) {
+
+                settingsPanel.classList.remove("show");
+
+            }
+
+        });
+    </script>
 </body>
 
 </html>
